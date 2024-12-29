@@ -53,9 +53,9 @@ end
 ---@param prefix_to_filter string -- like 202 or 19 or 20 or 2021-0 or 2021-01 or 2021-01-0 or 2021-01-01
 ---@return table -- like { "2021-01-01", "2021-01-02", "2021-01-03" }
 function Dates.get(prefix_to_filter)
-    if prefix_to_filter == nil or prefix_to_filter == "" then
-        error("prefix_to_filter is nil or empty")
-    end
+	if prefix_to_filter == nil or prefix_to_filter == "" then
+		error("prefix_to_filter is nil or empty")
+	end
 	local dates = {}
 
 	local endings
@@ -96,35 +96,35 @@ end
 ---@param date_from string -- like 2023-11-01
 ---@param date_to string -- like 2023-11-08
 function Dates.from_to(date_from, date_to)
-  local dates = {}
+	local dates = {}
 
-  local intersection = ""
-  for i = 1, math.min(#date_from, #date_to) do
-    if date_from:sub(i, i) == date_to:sub(i, i) then
-      intersection = intersection .. date_from:sub(i, i)
-    else
-      break
-    end
-  end
+	local intersection = ""
+	for i = 1, math.min(#date_from, #date_to) do
+		if date_from:sub(i, i) == date_to:sub(i, i) then
+			intersection = intersection .. date_from:sub(i, i)
+		else
+			break
+		end
+	end
 
-  local raw_dates = Dates.get(intersection)
+	local raw_dates = Dates.get(intersection)
 
-  local date_from_index = 1
-  local date_to_index = #raw_dates
-  for i, raw_date in ipairs(raw_dates) do
-    if raw_date == date_from then
-      date_from_index = i
-    end
-    if raw_date == date_to then
-      date_to_index = i
-    end
-  end
+	local date_from_index = 1
+	local date_to_index = #raw_dates
+	for i, raw_date in ipairs(raw_dates) do
+		if raw_date == date_from then
+			date_from_index = i
+		end
+		if raw_date == date_to then
+			date_to_index = i
+		end
+	end
 
-  for i = date_from_index, date_to_index do
-    table.insert(dates, raw_dates[i])
-  end
+	for i = date_from_index, date_to_index do
+		table.insert(dates, raw_dates[i])
+	end
 
-  return dates
+	return dates
 end
 
 return Dates

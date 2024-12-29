@@ -14,12 +14,14 @@ An utility plugin to manage and process dates for Neovim.
 ### API
 
 Check if a date is valid:
+
 ```lua
 ---@return boolean
 require('dates').is_valid(year, month, day)
 ```
 
 Get dates for a given prefix:
+
 ```lua
 ---@param prefix_to_filter string -- e.g., 2021-01 or 20.
 ---@return table -- array of suggested date strings
@@ -27,6 +29,7 @@ require('dates').get(prefix_to_filter)
 ```
 
 Get the weekday of a given date:
+
 ```lua
 ---@param date string -- e.g., 2021-01-01
 ---@return string -- the weekday of the given date.
@@ -34,6 +37,7 @@ require('dates').get_weekday(date)
 ```
 
 Get dates from date to date:
+
 ```lua
 ---@param from_date string -- e.g., 2021-01-01
 ---@param to_date string -- e.g., 2021-01-31
