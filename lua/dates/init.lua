@@ -60,7 +60,11 @@ end
 ---@param day number
 ---@return boolean
 function M.is_valid(year, month, day)
-	if type(year) ~= "number" or type(month) ~= "number" or type(day) ~= "number" then
+	if type(year) ~= 'number' or type(month) ~= 'number' or type(day) ~= 'number' then
+		return false
+	end
+	-- Reject floats, NaN, and inf
+	if year ~= math.floor(year) or month ~= math.floor(month) or day ~= math.floor(day) then
 		return false
 	end
 	if month < 1 or month > 12 or day < 1 then
@@ -226,6 +230,14 @@ function M.add_years(date_str, years_to_add)
 	return string.format("%04d-%02d-%02d", new_year, month, day)
 end
 
+---Subtract years from a date
+---@param date_str string
+---@param years_to_subtract number
+---@return string|nil
+function M.subtract_years(date_str, years_to_subtract)
+	return M.add_years(date_str, -years_to_subtract)
+end
+
 ---Get difference in days between two dates
 ---@param date_str1 string
 ---@param date_str2 string
@@ -300,14 +312,29 @@ end
 ---@param date_to string
 ---@return string[]|nil Array of date strings
 function M.range(date_from, date_to)
-	local diff = M.diff_days(date_from, date_to)
-	if not diff or diff < 0 then
+	local y1, m1, d1 = parse_date(date_from)
+	local y2, m2, d2 = parse_date(date_to)
+	if
+		not y1 or not m1 or not d1
+		or not y2 or not m2 or not d2
+		or not M.is_valid(y1, m1, d1)
+		or not M.is_valid(y2, m2, d2)
+	then
+		return nil
+	end
+
+	local t1 = date_to_timestamp(y1, m1, d1)
+	local t2 = date_to_timestamp(y2, m2, d2)
+	local diff = math.floor((t2 - t1) / 86400)
+	if diff < 0 then
 		return nil
 	end
 
 	local dates = {}
 	for i = 0, diff do
-		dates[#dates + 1] = M.add_days(date_from, i)
+		---@type string
+		local d = os.date('%Y-%m-%d', t1 + i * 86400)
+		dates[#dates + 1] = d
 	end
 
 	return dates
@@ -323,7 +350,11 @@ function M.weekday(date_str)
 	end
 
 	local timestamp = date_to_timestamp(year, month, day)
-	local wday = tonumber(os.date("%w", timestamp)) + 1 -- Convert 0-6 to 1-7
+	local wday_str = os.date('%w', timestamp)
+	if not wday_str then
+		return nil
+	end
+	local wday = tonumber(wday_str) + 1 -- Convert 0-6 to 1-7
 	return WEEKDAYS[wday]
 end
 
@@ -362,9 +393,9 @@ end
 
 ---Format a date
 ---@param date_str string
----@param format string os.date format string
+---@param fmt string os.date format string
 ---@return string|nil
-function M.format(date_str, format)
+function M.format(date_str, fmt)
 	local year, month, day = parse_date(date_str)
 	if not year or not month or not day or not M.is_valid(year, month, day) then
 		return nil
@@ -372,7 +403,7 @@ function M.format(date_str, format)
 
 	local timestamp = date_to_timestamp(year, month, day)
 	---@type string|nil
-	local result = os.date(format, timestamp)
+	local result = os.date(fmt, timestamp)
 	return result
 end
 
@@ -406,7 +437,11 @@ function M.iso_week(date_str)
 	end
 
 	local timestamp = date_to_timestamp(year, month, day)
-	return tonumber(os.date("%V", timestamp))
+	local week_str = os.date('%V', timestamp)
+	if not week_str then
+		return nil
+	end
+	return tonumber(week_str)
 end
 
 ---Get day of year
@@ -419,7 +454,11 @@ function M.day_of_year(date_str)
 	end
 
 	local timestamp = date_to_timestamp(year, month, day)
-	return tonumber(os.date("%j", timestamp))
+	local doy_str = os.date('%j', timestamp)
+	if not doy_str then
+		return nil
+	end
+	return tonumber(doy_str)
 end
 
 ---Get start of month
@@ -445,14 +484,26 @@ function M.end_of_month(date_str)
 	return string.format("%04d-%02d-%02d", year, month, last_day)
 end
 
--- Backward compatibility aliases
+-- Backward compatibility aliases (with deprecation warnings)
 ---@deprecated Use M.complete instead
-M.get = M.complete
+function M.get(...)
+	vim.deprecate('dates.get()', 'dates.complete()', '2.0.0', 'dates.nvim')
+	return M.complete(...)
+end
 ---@deprecated Use M.weekday instead
-M.get_weekday = M.weekday
----@deprecated Use M.quarter instead
-M.from_to = M.range
+function M.get_weekday(...)
+	vim.deprecate('dates.get_weekday()', 'dates.weekday()', '2.0.0', 'dates.nvim')
+	return M.weekday(...)
+end
 ---@deprecated Use M.range instead
-M.get_dates = M.range
+function M.from_to(...)
+	vim.deprecate('dates.from_to()', 'dates.range()', '2.0.0', 'dates.nvim')
+	return M.range(...)
+end
+---@deprecated Use M.range instead
+function M.get_dates(...)
+	vim.deprecate('dates.get_dates()', 'dates.range()', '2.0.0', 'dates.nvim')
+	return M.range(...)
+end
 
 return M
