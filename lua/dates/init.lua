@@ -252,7 +252,10 @@ end
 ---@return boolean|nil
 function M.is_before(date_str1, date_str2)
 	local cmp = M.compare(date_str1, date_str2)
-	return cmp and cmp == -1 or false
+	if cmp == nil then
+		return nil
+	end
+	return cmp == -1
 end
 
 ---Check if date1 is after date2
@@ -261,7 +264,10 @@ end
 ---@return boolean|nil
 function M.is_after(date_str1, date_str2)
 	local cmp = M.compare(date_str1, date_str2)
-	return cmp and cmp == 1 or false
+	if cmp == nil then
+		return nil
+	end
+	return cmp == 1
 end
 
 ---Get all dates in a range (inclusive)
