@@ -35,6 +35,10 @@ local function parse_date(date_str)
 	if type(date_str) ~= "string" or #date_str ~= 10 then
 		return nil
 	end
+	-- Validate YYYY-MM-DD separator positions
+	if date_str:sub(5, 5) ~= '-' or date_str:sub(8, 8) ~= '-' then
+		return nil
+	end
 	local year = tonumber(date_str:sub(1, 4))
 	local month = tonumber(date_str:sub(6, 7))
 	local day = tonumber(date_str:sub(9, 10))
