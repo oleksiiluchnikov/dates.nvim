@@ -91,10 +91,19 @@ function M.complete(prefix)
 	local results = {}
 
 	-- Parse the prefix to determine what to generate
-	local year_str, month_str = prefix:match("^(%d%d%d%d)%-?(%d?%d?)%-?(%d?%d?)$")
+	-- Match YYYY, YYYY-MM, YYYY-MM-D, or YYYY-MM-DD (dashes required)
+	local year_str, month_str, day_str =
+		prefix:match('^(%d%d%d%d)%-?(%d?%d?)%-?(%d?%d?)$')
 
 	if not year_str then
-		-- Invalid format
+		return {}
+	end
+
+	-- Reject if prefix is longer than 4 chars but missing dashes
+	if #prefix > 4 and prefix:sub(5, 5) ~= '-' then
+		return {}
+	end
+	if #prefix > 7 and prefix:sub(8, 8) ~= '-' then
 		return {}
 	end
 
@@ -106,16 +115,28 @@ function M.complete(prefix)
 	-- Determine generation scope
 	local month_start, month_end = 1, 12
 
-	if month_str and month_str ~= "" then
+	if month_str and month_str ~= '' then
 		if #month_str == 2 then
-			-- Full month specified
 			local month = tonumber(month_str)
 			if not month or month < 1 or month > 12 then
 				return {}
 			end
 			month_start, month_end = month, month
+		elseif #month_str == 1 then
+			-- Single digit month prefix: narrow to matching months
+			local digit = tonumber(month_str)
+			if digit == 0 then
+				month_start, month_end = 1, 9
+			elseif digit == 1 then
+				month_start, month_end = 10, 12
+			else
+				return {}
+			end
 		end
 	end
+
+	-- Skip day_str narrowing; prefix filter on line below handles it
+	_ = day_str
 
 	-- Generate dates and filter by prefix
 	for month = month_start, month_end do
