@@ -362,17 +362,13 @@ end
 ---Get yesterday's date
 ---@return string
 function M.yesterday()
-	---@type string
-	local result = os.date("%Y-%m-%d", os.time() - 86400)
-	return result
+	return M.add_days(M.today(), -1)
 end
 
 ---Get tomorrow's date
 ---@return string
 function M.tomorrow()
-	---@type string
-	local result = os.date("%Y-%m-%d", os.time() + 86400)
-	return result
+	return M.add_days(M.today(), 1)
 end
 
 ---Get ISO week number
