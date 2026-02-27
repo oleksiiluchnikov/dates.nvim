@@ -112,9 +112,8 @@ test("complete: year-month-day prefix", function()
 	assert_eq(results[#results], "2024-01-09")
 
 	results = dates.complete("2024-01-1")
-	print(vim.inspect(results))
 	assert_eq(#results, 10)
-	assert_eq(results[1], "2024-01-01")
+	assert_eq(results[1], "2024-01-10")
 	assert_eq(results[#results], "2024-01-19")
 end)
 
