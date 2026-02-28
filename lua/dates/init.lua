@@ -484,25 +484,20 @@ function M.end_of_month(date_str)
 	return string.format("%04d-%02d-%02d", year, month, last_day)
 end
 
--- Backward compatibility aliases (with deprecation warnings)
----@deprecated Use M.complete instead
+-- Backward compatibility aliases
 function M.get(...)
-	vim.deprecate('dates.get()', 'dates.complete()', '2.0.0', 'dates.nvim')
 	return M.complete(...)
 end
----@deprecated Use M.weekday instead
+
 function M.get_weekday(...)
-	vim.deprecate('dates.get_weekday()', 'dates.weekday()', '2.0.0', 'dates.nvim')
 	return M.weekday(...)
 end
----@deprecated Use M.range instead
+
 function M.from_to(...)
-	vim.deprecate('dates.from_to()', 'dates.range()', '2.0.0', 'dates.nvim')
 	return M.range(...)
 end
----@deprecated Use M.range instead
+
 function M.get_dates(...)
-	vim.deprecate('dates.get_dates()', 'dates.range()', '2.0.0', 'dates.nvim')
 	return M.range(...)
 end
 
