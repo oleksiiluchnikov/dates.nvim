@@ -112,6 +112,14 @@ dates.add_years("2024-02-29", 1)   -- "2025-02-28" (not a leap year)
 dates.add_years("2020-02-29", 4)   -- "2024-02-29" (both leap years)
 ```
 
+#### `subtract_years(date_str, years)`
+
+Subtract years (convenience wrapper).
+
+```lua
+dates.subtract_years("2024-02-29", 4)  -- "2020-02-29"
+```
+
 ### Comparisons
 
 #### `diff_days(date_str1, date_str2)`
@@ -262,6 +270,17 @@ dates.complete("2024-01")     -- All 31 dates in January 2024
 dates.complete("2024-01-1")   -- Dates from 01 to 19
 dates.complete("2024-01-0")   -- Dates from 01 to 09
 ```
+
+### Backward Compatibility Aliases
+
+These names are kept as silent wrappers for older code:
+
+| Alias | Maps to |
+|---|---|
+| `get(prefix)` | `complete(prefix)` |
+| `get_weekday(date_str)` | `weekday(date_str)` |
+| `from_to(date_from, date_to)` | `range(date_from, date_to)` |
+| `get_dates(date_from, date_to)` | `range(date_from, date_to)` |
 
 ## Edge Cases & Behavior
 
